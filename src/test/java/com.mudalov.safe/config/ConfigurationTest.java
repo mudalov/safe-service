@@ -1,6 +1,5 @@
 package com.mudalov.safe.config;
 
-import com.typesafe.config.ConfigException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ public class ConfigurationTest {
 
     @Test
     public void testLoad() {
-        Configuration configuration = Configuration.load();
+        Configuration configuration = Configuration.root();
         // default
         Assert.assertEquals(Integer.valueOf(-1), configuration.getMaxWorkQueueSize());
         // overwritten
@@ -21,19 +20,8 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testCustomLocation() {
-        Configuration configuration = Configuration.load("custom-safe-service");
-        Assert.assertEquals(Integer.valueOf(15), configuration.getThreadsPerGroup());
-    }
-
-    @Test(expected = ConfigException.class)
-    public void testLoad_FailOnMissedFile() {
-        Configuration.load("does-not-exist");
-    }
-
-    @Test
     public void testGroupProperties() {
-        Configuration configuration = Configuration.load().forGroup("userInfoService");
+        Configuration configuration = Configuration.root().forGroup("userInfoService");
         Assert.assertEquals(Integer.valueOf(-1), configuration.getMaxWorkQueueSize());
         Assert.assertEquals(Integer.valueOf(12), configuration.getThreadsPerGroup());
     }

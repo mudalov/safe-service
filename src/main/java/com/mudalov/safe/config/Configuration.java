@@ -1,10 +1,9 @@
 package com.mudalov.safe.config;
 
+import com.mudalov.safe.cache.ehcache.EhCacheFactory;
 import com.mudalov.safe.util.Pair;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigParseOptions;
-import com.typesafe.config.ConfigResolveOptions;
 
 /**
  * User: mudalov
@@ -15,9 +14,16 @@ public class Configuration {
 
     public static final String DefaultConfigFile = "safe-service";
 
+    private static Configuration rootConfig = load();
+
+    /**
+     * Supported configuration properties and their default values
+     */
     private static class Props {
         final static Pair<String, Integer> ThreadsPerGroup = new Pair<String, Integer>("threadsPerGroup", 5);
         final static Pair<String, Integer> MaxWorkQueueSize = new Pair<String, Integer>("maxWorkQueueSize", -1);
+        final static Pair<String, String> CacheFactory = new Pair<String, String>("maxWorkQueueSize", EhCacheFactory.class.getName());
+        final static Pair<String, String> CacheConfigLocation = new Pair<String, String>("cacheConfigLocation", "safe-service-ehcache.xml");
     }
 
     private Configuration(){}
@@ -26,6 +32,18 @@ public class Configuration {
 
     private Configuration(Config baseConfig) {
         this.baseConfig = baseConfig;
+    }
+
+    public static Configuration root() {
+        return rootConfig;
+    }
+
+    public String getCacheFactory() {
+        return getValue(Props.CacheFactory);
+    }
+
+    public String getCacheConfigLocation() {
+        return getValue(Props.CacheConfigLocation);
     }
 
     public Integer getThreadsPerGroup() {
@@ -49,14 +67,10 @@ public class Configuration {
         return load(DefaultConfigFile);
     }
 
-    public static Configuration load(String baseName) {
-        Config baseConfig = ConfigFactory.load(baseName,
-                ConfigParseOptions.defaults().setAllowMissing(false),
-                ConfigResolveOptions.defaults());
+    private static Configuration load(String baseName) {
+        Config baseConfig = ConfigFactory.load(baseName);
         Configuration configuration = new Configuration(baseConfig);
         return configuration;
     }
-
-
 
 }
