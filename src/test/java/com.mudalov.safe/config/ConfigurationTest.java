@@ -31,4 +31,11 @@ public class ConfigurationTest {
         Configuration.load("does-not-exist");
     }
 
+    @Test
+    public void testGroupProperties() {
+        Configuration configuration = Configuration.load().forGroup("userInfoService");
+        Assert.assertEquals(Integer.valueOf(-1), configuration.getMaxWorkQueueSize());
+        Assert.assertEquals(Integer.valueOf(12), configuration.getThreadsPerGroup());
+    }
+
 }
