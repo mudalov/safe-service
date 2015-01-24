@@ -17,12 +17,18 @@ public class ConfigurationTest {
         // default
         Assert.assertEquals(Integer.valueOf(-1), configuration.getMaxWorkQueueSize());
         // overwritten
-        Assert.assertEquals(Integer.valueOf(10), configuration.getThreadsNumber());
+        Assert.assertEquals(Integer.valueOf(10), configuration.getThreadsPerGroup());
+    }
+
+    @Test
+    public void testCustomLocation() {
+        Configuration configuration = Configuration.load("custom-safe-service");
+        Assert.assertEquals(Integer.valueOf(15), configuration.getThreadsPerGroup());
     }
 
     @Test(expected = ConfigException.class)
     public void testLoad_FailOnMissedFile() {
-        Configuration.load("does-not-exist.conf");
+        Configuration.load("does-not-exist");
     }
 
 }

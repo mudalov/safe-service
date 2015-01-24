@@ -3,6 +3,8 @@ package com.mudalov.safe.config;
 import com.mudalov.safe.util.Pair;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigParseOptions;
+import com.typesafe.config.ConfigResolveOptions;
 
 /**
  * User: mudalov
@@ -14,7 +16,7 @@ public class Configuration {
     public static final String DefaultConfigFile = "safe-service";
 
     private static class Props {
-        final static Pair<String, Integer> ThreadsNumber = new Pair<String, Integer>("nThreads", 5);
+        final static Pair<String, Integer> ThreadsPerGroup = new Pair<String, Integer>("threadsPerGroup", 5);
         final static Pair<String, Integer> MaxWorkQueueSize = new Pair<String, Integer>("maxWorkQueueSize", -1);
     }
 
@@ -26,8 +28,12 @@ public class Configuration {
         this.baseConfig = baseConfig;
     }
 
-    public Integer getThreadsNumber() {
-        return getValue(Props.ThreadsNumber);
+    public Integer getThreadsPerGroup() {
+        return getValue(Props.ThreadsPerGroup);
+    }
+
+    public Configuration forGroup(String groupName) {
+        return new Configuration(this.baseConfig.getConfig(groupName));
     }
 
     private <T> T getValue(Pair<String, T> prop) {
@@ -44,7 +50,9 @@ public class Configuration {
     }
 
     public static Configuration load(String baseName) {
-        Config baseConfig = ConfigFactory.load(baseName);
+        Config baseConfig = ConfigFactory.load(baseName,
+                ConfigParseOptions.defaults().setAllowMissing(false),
+                ConfigResolveOptions.defaults());
         Configuration configuration = new Configuration(baseConfig);
         return configuration;
     }
