@@ -1,53 +1,50 @@
 package com.mudalov.safe.impl;
 
 import com.mudalov.safe.Command;
-import com.mudalov.safe.ErrorHandler;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
+ * Base command, main building block for execution items.
+ * All commands must override this class for execution.
+ *
  * User: mudalov
  * Date: 23/01/15
  * Time: 01:36
  */
-public class BaseCommand<T> implements Command<T> {
+public abstract class BaseCommand<T> implements Command<T> {
 
-    private final SafeCommands executor;
+    private GroupExecutionContext context;
 
-    private final Callable<T> callable;
+    protected void setContext(GroupExecutionContext context) {
+        this.context = context;
+    }
 
-    private Callable<T> fallback;
+    protected GroupExecutionContext getContext() {
+        return this.context;
+    }
 
-    public BaseCommand(SafeCommands executor, Callable<T> callable) {
-        this.executor = executor;
-        this.callable = callable;
+    protected BaseCommand() {
     }
 
     @Override
     public T execute() {
-        return null;
+        checkContextReady();
+        return this.context.execute(this);
     }
 
     @Override
     public Future<T> queue() {
-        return null;
+        return this.context.queue(this);
     }
 
-    @Override
-    public void withFallback(Callable<T> callable) {
-        this.fallback = callable;
+    abstract Callable<T> action();
+
+    protected void checkContextReady() {
+        if (context == null) {
+            throw new IllegalStateException("Execution context is not provided");
+        }
     }
-
-    @Override
-    public void withFallbackValue(T value) {
-
-    }
-
-    @Override
-    public void withErrorHandler(ErrorHandler errorHandler) {
-
-    }
-
 
 }

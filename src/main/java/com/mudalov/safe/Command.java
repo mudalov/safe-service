@@ -14,10 +14,4 @@ public interface Command<T> {
 
     Future<T> queue();
 
-    void withFallback(Callable<T> callable);
-
-    void withFallbackValue(T value);
-
-    void withErrorHandler(ErrorHandler errorHandler);
-
 }
