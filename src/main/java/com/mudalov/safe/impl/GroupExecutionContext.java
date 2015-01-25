@@ -1,5 +1,6 @@
 package com.mudalov.safe.impl;
 
+import com.mudalov.safe.CachedCommand;
 import com.mudalov.safe.cache.Cache;
 import com.mudalov.safe.cache.CacheFactory;
 import com.mudalov.safe.config.Configuration;
@@ -47,11 +48,15 @@ public class GroupExecutionContext {
                 workQueue);
     }
 
-    public <T> T execute(final BaseCommand<T> command) {
+    public <T> T execute(final AbstractCommand<T> command) {
         try {
             Future<T> actionFuture = submitCommand(command);
             try {
-                return actionFuture.get(config.getTimeOut(), TimeUnit.MILLISECONDS);
+                T result = actionFuture.get(config.getTimeOut(), TimeUnit.MILLISECONDS);
+                if (command instanceof CachedCommand) {
+                    updateCache((CachedCommand<T>) command, result);
+                }
+                return result;
             } catch (Exception e) {
                 processError(command, e);
             } finally {
@@ -63,7 +68,11 @@ public class GroupExecutionContext {
         return command.fallback();
     }
 
-    private <T> Future<T> submitCommand(final BaseCommand<T> command) {
+    private <T> void updateCache(CachedCommand<T> command, T result) {
+        this.cache.set(key(command), result);
+    }
+
+    private <T> Future<T> submitCommand(final AbstractCommand<T> command) {
         return this.executorService.submit(new Callable<T>() {
             @Override
             public T call() throws Exception {
@@ -72,7 +81,7 @@ public class GroupExecutionContext {
         });
     }
 
-    private void processError(BaseCommand command, Exception cause) {
+    private void processError(AbstractCommand command, Exception cause) {
         log.debug(this.getGroupName() + " - Command Execution failed", cause);
         command.onError(cause);
     }
@@ -81,9 +90,16 @@ public class GroupExecutionContext {
         return groupName;
     }
 
-    public <T> Future<T> queue(BaseCommand<T> command) {
+    public <T> Future<T> queue(AbstractCommand<T> command) {
         return submitCommand(command);
     }
 
 
+    public <T> T getCachedValue(CachedCommand<T> command) {
+        return this.cache.get(key(command));
+    }
+
+    private <T> String key(CachedCommand<T> command) {
+        return this.groupName + "." + command.getKey();
+    }
 }

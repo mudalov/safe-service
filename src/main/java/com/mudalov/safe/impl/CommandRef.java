@@ -13,9 +13,9 @@ public class CommandRef<T> {
 
     private final GroupExecutionContext context;
 
-    private final BaseCommand<T> command;
+    private final AbstractCommand<T> command;
 
-    CommandRef(GroupExecutionContext context, BaseCommand<T> command) {
+    CommandRef(GroupExecutionContext context, AbstractCommand<T> command) {
         this.context = context;
         this.command = command;
     }

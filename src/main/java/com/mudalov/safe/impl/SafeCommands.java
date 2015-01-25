@@ -27,13 +27,13 @@ public class SafeCommands {
     private SafeCommands() {
     }
 
-    public static <T> CommandRef<T> create(BaseCommand<T> command, String group) {
+    public static <T> CommandRef<T> create(AbstractCommand<T> command, String group) {
         GroupExecutionContext groupContext = getGroupContext(group);
         command.setContext(groupContext);
         return new CommandRef<T>(groupContext, command);
     }
 
-    public static <T> CommandRef<T> create(BaseCommand<T> command) {
+    public static <T> CommandRef<T> create(AbstractCommand<T> command) {
         return create(command, DefaultGroup);
     }
 

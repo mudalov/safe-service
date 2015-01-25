@@ -10,7 +10,7 @@ import com.mudalov.safe.Command;
  * Date: 23/01/15
  * Time: 01:36
  */
-public abstract class BaseCommand<T> implements Command<T> {
+public abstract class AbstractCommand<T> implements Command<T> {
 
     private GroupExecutionContext context;
 

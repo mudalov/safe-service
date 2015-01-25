@@ -12,7 +12,7 @@ public class GroupExecutionContextTest {
     @Test
     public void testExecute() throws Exception {
         // simplest case
-        BaseCommand<Integer> sum = new BaseCommand<Integer>() {
+        AbstractCommand<Integer> sum = new AbstractCommand<Integer>() {
             @Override
             public Integer action() {
                 return 1 + 1;
@@ -26,7 +26,7 @@ public class GroupExecutionContextTest {
     @Test
     public void testExecute_FallBackOnTimeOut() {
         final AtomicInteger errorFlag = new AtomicInteger(0);
-        BaseCommand<Integer> slowSum = new BaseCommand<Integer>() {
+        AbstractCommand<Integer> slowSum = new AbstractCommand<Integer>() {
             @Override
             public Integer action() {
                 try {
@@ -59,7 +59,7 @@ public class GroupExecutionContextTest {
     @Test
     public void testExecute_FallBackOnExecutionException() {
         final AtomicInteger errorFlag = new AtomicInteger(0);
-        BaseCommand<Integer> errorSum = new BaseCommand<Integer>() {
+        AbstractCommand<Integer> errorSum = new AbstractCommand<Integer>() {
             @Override
             public Integer action() throws Exception {
                 throw new IllegalStateException();
@@ -86,7 +86,7 @@ public class GroupExecutionContextTest {
     @Test
     public void testExecute_FallBackOnRejected() throws InterruptedException {
         final AtomicInteger errorFlag = new AtomicInteger(0);
-        final BaseCommand<Integer> sum = new BaseCommand<Integer>() {
+        final AbstractCommand<Integer> sum = new AbstractCommand<Integer>() {
             @Override
             public Integer action() throws Exception {
                 Thread.sleep(500);
