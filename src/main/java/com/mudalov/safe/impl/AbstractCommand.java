@@ -30,10 +30,10 @@ public abstract class AbstractCommand<T> implements Command<T> {
      * called in a client thread before using fallback procedure
      *
      * @param cause error cause, one of following exceptions:
-     *              TimeOutException - in case of time out
-     *              ExecutionException - in case of error in main action
-     *              InterruptedException - if execution thread is interrupted
-     *              RejectedExecutionException - if task is rejected due to service shutdown or capacity limitations
+     *              @see java.util.concurrent.TimeoutException - in case of time out
+     *              @see java.util.concurrent.ExecutionException - in case of error in main action
+     *              @see InterruptedException - if execution thread is interrupted
+     *              @see java.util.concurrent.RejectedExecutionException - if task is rejected due to service shutdown or capacity limitations
      */
     public void onError(Exception cause) {
         // let client code to deal with that

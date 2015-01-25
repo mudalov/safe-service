@@ -7,7 +7,7 @@ import org.junit.Test;
 public class ConfigurationTest {
 
     @Test
-    public void testLoad() {
+    public void testRootConfig() {
         Configuration configuration = Configuration.root();
         Assert.assertEquals(Integer.valueOf(2), configuration.getMaxWorkQueueSize());
         Assert.assertEquals(Integer.valueOf(2), configuration.getThreadsPerGroup());

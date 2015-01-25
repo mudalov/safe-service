@@ -10,14 +10,14 @@ package com.mudalov.safe.cache;
 public interface CacheFactory {
 
     /**
-     * Provide cache instance to be shared by specified Commands Group
+     * Provides cache instance to be shared by specified Commands Group
      *
      * @param groupName
      */
     Cache getCache(String groupName);
 
     /**
-     * Provide common cache instance
+     * Provides common cache instance
      *
      */
     Cache getCache();

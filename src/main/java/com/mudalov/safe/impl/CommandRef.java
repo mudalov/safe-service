@@ -21,7 +21,7 @@ public class CommandRef<T> {
     }
 
     /**
-     * Submit command for execution, perform error handling and fall back logic if required
+     * Submits command for execution, perform error handling and fall back logic if required
      *
      */
     public T execute() {
@@ -30,7 +30,7 @@ public class CommandRef<T> {
 
     /**
      * Submits command to corresponding dependency group, no additional logic is performed.
-     * Should only in cases when custom processing is required
+     * Should only used in cases when custom processing is required
      *
      * @throws java.util.concurrent.RejectedExecutionException in case of capacity issues for corresponding group
      */
