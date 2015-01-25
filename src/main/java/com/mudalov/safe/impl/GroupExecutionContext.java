@@ -48,20 +48,28 @@ public class GroupExecutionContext {
     }
 
     public <T> T execute(final BaseCommand<T> command) {
-        Future<T> actionFuture = this.executorService.submit(new Callable<T>() {
+        try {
+            Future<T> actionFuture = submitCommand(command);
+            try {
+                return actionFuture.get(config.getTimeOut(), TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                processError(command, e);
+            } finally {
+                actionFuture.cancel(true);
+            }
+        } catch (RejectedExecutionException e) {
+            processError(command, e);
+        }
+        return command.fallback();
+    }
+
+    private <T> Future<T> submitCommand(final BaseCommand<T> command) {
+        return this.executorService.submit(new Callable<T>() {
             @Override
             public T call() throws Exception {
                 return command.action();
             }
         });
-        try {
-            return actionFuture.get(config.getTimeOut(), TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            processError(command, e);
-        } finally {
-            actionFuture.cancel(true);
-        }
-        return command.fallback();
     }
 
     private void processError(BaseCommand command, Exception cause) {
@@ -74,8 +82,7 @@ public class GroupExecutionContext {
     }
 
     public <T> Future<T> queue(BaseCommand<T> command) {
-        // TODO
-        return null;
+        return submitCommand(command);
     }
 
 

@@ -20,10 +20,20 @@ public class CommandRef<T> {
         this.command = command;
     }
 
+    /**
+     * Submit command for execution, perform error handling and fall back logic if required
+     *
+     */
     public T execute() {
         return this.context.execute(command);
     }
 
+    /**
+     * Submits command to corresponding dependency group, no additional logic is performed.
+     * Should only in cases when custom processing is required
+     *
+     * @throws java.util.concurrent.RejectedExecutionException in case of capacity issues for corresponding group
+     */
     public Future<T> queue() {
         return this.context.queue(command);
     }

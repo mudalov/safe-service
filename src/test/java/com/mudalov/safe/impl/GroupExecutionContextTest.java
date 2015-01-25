@@ -15,7 +15,15 @@ public class GroupExecutionContextTest {
                 return 1 + 1;
             }
         };
-        Integer result = SafeCommands.create(sum).execute();
+        CommandRef<Integer> commandRef = SafeCommands.create(sum);
+        Integer result = commandRef.execute();
         Assert.assertEquals(result, Integer.valueOf(2));
     }
+
+    @Test
+    public void testExecute_FallBackOnTimeOut() {
+//        BaseCommand<Integer>
+    }
+
+
 }

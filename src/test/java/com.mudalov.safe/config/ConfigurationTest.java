@@ -9,16 +9,16 @@ public class ConfigurationTest {
     @Test
     public void testLoad() {
         Configuration configuration = Configuration.root();
-        Assert.assertEquals(Integer.valueOf(5), configuration.getMaxWorkQueueSize());
-        Assert.assertEquals(Integer.valueOf(10), configuration.getThreadsPerGroup());
+        Assert.assertEquals(Integer.valueOf(2), configuration.getMaxWorkQueueSize());
+        Assert.assertEquals(Integer.valueOf(2), configuration.getThreadsPerGroup());
     }
 
     @Test
     public void testGroupProperties() {
         Configuration rootConfig = Configuration.root();
-        Assert.assertEquals(Integer.valueOf(10), rootConfig.getThreadsPerGroup());
+        Assert.assertEquals(Integer.valueOf(2), rootConfig.getThreadsPerGroup());
         Configuration configuration = rootConfig.forGroup("userInfoService");
-        Assert.assertEquals(Integer.valueOf(5), configuration.getMaxWorkQueueSize());
+        Assert.assertEquals(Integer.valueOf(2), configuration.getMaxWorkQueueSize());
         Assert.assertEquals(Integer.valueOf(12), configuration.getThreadsPerGroup());
     }
 
