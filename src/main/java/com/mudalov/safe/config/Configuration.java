@@ -27,12 +27,21 @@ public class Configuration {
         final static Pair<String, Long> TimeOut = new Pair<String, Long>("timeOut", 1000L);
     }
 
-    private Configuration(){}
+    private Configuration(){
+        this(null, null);
+    }
 
-    private Config baseConfig;
+    private final Config baseConfig;
+
+    private final String basePath;
 
     private Configuration(Config baseConfig) {
+        this(baseConfig, null);
+    }
+
+    private Configuration(Config baseConfig, String basePath) {
         this.baseConfig = baseConfig;
+        this.basePath = basePath != null ? basePath + "." : null;
     }
 
     public static Configuration root() {
@@ -52,12 +61,18 @@ public class Configuration {
     }
 
     public Configuration forGroup(String groupName) {
-        return new Configuration(this.baseConfig.getConfig(groupName));
+        return new Configuration(this.baseConfig, groupName);
     }
 
     private <T> T getValue(Pair<String, T> prop) {
-        return this.baseConfig.hasPath(prop.getFirst())
-                ? (T)this.baseConfig.getAnyRef(prop.getFirst()) : prop.getSecond();
+        String key = prop.getFirst();
+        if (basePath != null
+                && this.baseConfig.hasPath(basePath + key)) {
+            return (T)this.baseConfig.getAnyRef(basePath + key);
+        } else {
+            return this.baseConfig.hasPath(key)
+                    ? (T)this.baseConfig.getAnyRef(key) : prop.getSecond();
+        }
     }
 
     public Integer getMaxWorkQueueSize() {
