@@ -11,7 +11,7 @@ public interface Command<T> {
      * Action to execute, called asynchronously in separate thread
      *
      */
-    public abstract T action();
+    public abstract T action() throws Exception;
 
     /**
      * Result in case of task failure, called from client thread

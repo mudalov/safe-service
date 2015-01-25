@@ -4,6 +4,7 @@ package com.mudalov.safe.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,6 +55,33 @@ public class GroupExecutionContextTest {
         Assert.assertEquals(result, slowSum.fallback());
         Assert.assertEquals(1, errorFlag.get());
 
+    }
+
+    @Test
+    public void testExecute_FallBackOnExecutionException() {
+        final AtomicInteger errorFlag = new AtomicInteger(0);
+        BaseCommand<Integer> errorSum = new BaseCommand<Integer>() {
+            @Override
+            public Integer action() throws Exception {
+                throw new IllegalStateException();
+            }
+
+            @Override
+            public void onError(Exception cause) {
+                Assert.assertTrue(cause instanceof ExecutionException);
+                Assert.assertTrue(cause.getCause() instanceof IllegalStateException);
+                errorFlag.incrementAndGet();
+            }
+
+            @Override
+            public Integer fallback() {
+                return 2;
+            }
+        };
+        CommandRef<Integer> commandRef = SafeCommands.create(errorSum);
+        Integer result = commandRef.execute();
+        Assert.assertEquals(result, errorSum.fallback());
+        Assert.assertEquals(1, errorFlag.get());
     }
 
 
