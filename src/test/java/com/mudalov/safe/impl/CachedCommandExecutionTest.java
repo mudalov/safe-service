@@ -69,4 +69,61 @@ public class CachedCommandExecutionTest {
         Assert.assertEquals("Expect result from Test Cache", TestCacheFactory.CacheValue, failedServiceResult);
     }
 
+    @Test
+    public void testSeparateCacheRegions() {
+        AbstractCachedCommand<String> helloWorld = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                return "Hello, world!";
+            }
+        };
+        AbstractCachedCommand<String> helloWorld2 = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                return "Hello, world!!";
+            }
+        };
+        // success, cache updated
+        SafeCommands.create(helloWorld, "group1").execute();
+        SafeCommands.create(helloWorld2, "group2").execute();
+        AbstractCachedCommand<String> failingCommand = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                throw new Exception();
+            }
+        };
+        AbstractCachedCommand<String> failingCommand2 = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                throw new Exception();
+            }
+        };
+        String failedServiceResult = SafeCommands.create(failingCommand, "group1").execute();
+        Assert.assertEquals("Hello, world!", failedServiceResult);
+        failedServiceResult = SafeCommands.create(failingCommand2, "group2").execute();
+        Assert.assertEquals("Hello, world!!", failedServiceResult);
+
+    }
+
+
 }
