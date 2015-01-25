@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GroupExecutionContextTest {
+public class BaseCommandExecutionTest {
 
     @Test
     public void testExecute() throws Exception {
