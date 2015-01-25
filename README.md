@@ -65,7 +65,7 @@ To change configation you need to have *safe-service.conf* file in your classpat
     
 #### API Example
 
-Here is a simple example of executing action as a part of "userInfoService" dependency group. Cached user information used in case of failure: 
+Here is a simple example of executing action as a part of "userInfoService" dependency group, cached user information used in case of failure: 
 
         User user = SafeCommands.create(new AbstractCachedCommand<User>() {
             @Override
