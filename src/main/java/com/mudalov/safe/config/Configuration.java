@@ -24,7 +24,7 @@ public class Configuration {
         final static Pair<String, Integer> MaxWorkQueueSize = new Pair<String, Integer>("maxWorkQueueSize", -1);
         final static Pair<String, String> CacheFactory = new Pair<String, String>("cacheFactory", EhCacheFactory.class.getName());
         final static Pair<String, String> CacheConfigLocation = new Pair<String, String>("cacheConfigLocation", "/safe-service-ehcache.xml");
-        final static Pair<String, Long> TimeOut = new Pair<String, Long>("timeOut", 1000L);
+        final static Pair<String, Integer> TimeOut = new Pair<String, Integer>("timeOut", 1000);
     }
 
     private Configuration(){
@@ -79,7 +79,7 @@ public class Configuration {
         return getValue(Props.MaxWorkQueueSize);
     }
 
-    public Long getTimeOut() {
+    public Integer getTimeOut() {
         return getValue(Props.TimeOut);
     }
 
