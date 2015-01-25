@@ -1,7 +1,8 @@
 package com.mudalov.safe.impl;
 
 
-import junit.framework.Assert;
+import com.mudalov.safe.cache.TestCacheFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
@@ -36,7 +37,36 @@ public class CachedCommandExecutionTest {
         };
         Date failedServiceResult = SafeCommands.create(failingCommand).execute();
         Assert.assertEquals("Expect cached result", result, failedServiceResult);
+    }
 
+    @Test
+    public void testCustomCache() {
+        AbstractCachedCommand<String> helloWorld = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                return "Hello, world!";
+            }
+        };
+        // success, cache updated
+        SafeCommands.create(helloWorld, "customCache").execute();
+        AbstractCachedCommand<String> failingCommand = new AbstractCachedCommand<String>() {
+            @Override
+            public String getKey() {
+                return "key";
+            }
+
+            @Override
+            public String action() throws Exception {
+                throw new Exception();
+            }
+        };
+        String failedServiceResult = SafeCommands.create(failingCommand, "customCache").execute();
+        Assert.assertEquals("Expect result from Test Cache", TestCacheFactory.CacheValue, failedServiceResult);
     }
 
 }
