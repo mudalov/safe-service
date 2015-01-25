@@ -63,4 +63,24 @@ To change configation you need to have *safe-service.conf* file in your classpat
         timeOut : 1500
     }
     
-    
+#### API Example
+
+Here is a simple example of executing action as a part of "userInfoService" dependency group. Cached user information used in case of failure: 
+
+        User user = SafeCommands.create(new AbstractCachedCommand<User>() {
+            @Override
+            public String getKey() {
+                // key to be used for cache, each dependency group stored in a separate cache region
+                return userId.toString();
+            }
+            @Override
+            public void onError(Exception cause) {
+                log.error("Failed to get user, using cached value", e);
+            }
+            @Override
+            public User action() throws Exception {
+                return userService.getUser(userId);
+            }
+        }, "userInfoService").execute();
+
+Please reference to unit tests for more detailed examples.
