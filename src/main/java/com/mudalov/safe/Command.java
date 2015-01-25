@@ -1,8 +1,5 @@
 package com.mudalov.safe;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-
 /**
  * User: mudalov
  * Date: 22/01/15
@@ -10,8 +7,16 @@ import java.util.concurrent.Future;
  */
 public interface Command<T> {
 
-    T execute();
+    /**
+     * Action to execute, called asynchronously in separate thread
+     *
+     */
+    public abstract T action();
 
-    Future<T> queue();
-
+    /**
+     * Result in case of task failure, called from client thread
+     *
+     * @return
+     */
+    public T fallback();
 }

@@ -1,11 +1,6 @@
 package com.mudalov.safe.impl;
 
 import com.mudalov.safe.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 /**
  * Base command, main building block for execution items.
@@ -19,7 +14,7 @@ public abstract class BaseCommand<T> implements Command<T> {
 
     private GroupExecutionContext context;
 
-    protected void setContext(GroupExecutionContext context) {
+    void setContext(GroupExecutionContext context) {
         this.context = context;
     }
 
@@ -27,33 +22,8 @@ public abstract class BaseCommand<T> implements Command<T> {
         return this.context;
     }
 
-    protected BaseCommand() {
-    }
-
     @Override
-    public T execute() {
-        checkContextReady();
-        return this.context.execute(this);
-    }
-
-    @Override
-    public Future<T> queue() {
-        checkContextReady();
-        return this.context.queue(this);
-    }
-
-    /**
-     * Action to execute, called asynchronously in separate thread
-     *
-     */
-    abstract Callable<T> action();
-
-    /**
-     * Result in case of task failure, called from client thread
-     *
-     * @return
-     */
-    abstract T fallback();
+    public T fallback() {return null;};
 
     /**
      * Error callback to be called if task execution can't be completed,
@@ -67,12 +37,6 @@ public abstract class BaseCommand<T> implements Command<T> {
      */
     public void onError(Exception cause) {
         // let client code to deal with that
-    }
-
-    protected void checkContextReady() {
-        if (context == null) {
-            throw new IllegalStateException("Execution context is not provided");
-        }
     }
 
 }

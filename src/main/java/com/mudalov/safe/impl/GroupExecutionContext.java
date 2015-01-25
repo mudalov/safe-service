@@ -47,8 +47,13 @@ public class GroupExecutionContext {
                 workQueue);
     }
 
-    public <T> T execute(BaseCommand<T> command) {
-        Future<T> actionFuture = this.executorService.submit(command.action());
+    public <T> T execute(final BaseCommand<T> command) {
+        Future<T> actionFuture = this.executorService.submit(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                return command.action();
+            }
+        });
         try {
             return actionFuture.get(config.getTimeOut(), TimeUnit.MILLISECONDS);
         } catch (Exception e) {

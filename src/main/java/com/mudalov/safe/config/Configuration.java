@@ -22,8 +22,8 @@ public class Configuration {
     private static class Props {
         final static Pair<String, Integer> ThreadsPerGroup = new Pair<String, Integer>("threadsPerGroup", 5);
         final static Pair<String, Integer> MaxWorkQueueSize = new Pair<String, Integer>("maxWorkQueueSize", -1);
-        final static Pair<String, String> CacheFactory = new Pair<String, String>("maxWorkQueueSize", EhCacheFactory.class.getName());
-        final static Pair<String, String> CacheConfigLocation = new Pair<String, String>("cacheConfigLocation", "safe-service-ehcache.xml");
+        final static Pair<String, String> CacheFactory = new Pair<String, String>("cacheFactory", EhCacheFactory.class.getName());
+        final static Pair<String, String> CacheConfigLocation = new Pair<String, String>("cacheConfigLocation", "/safe-service-ehcache.xml");
         final static Pair<String, Long> TimeOut = new Pair<String, Long>("timeOut", 1000L);
     }
 

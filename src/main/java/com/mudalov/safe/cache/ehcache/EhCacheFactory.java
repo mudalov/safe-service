@@ -4,6 +4,7 @@ import com.mudalov.safe.cache.Cache;
 import com.mudalov.safe.cache.CacheFactory;
 import com.mudalov.safe.config.Configuration;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.ConfigurationFactory;
 
 /**
  * Default EhCache based Cache Factory, each Dependency Group is configured as
@@ -15,7 +16,9 @@ import net.sf.ehcache.CacheManager;
  */
 public class EhCacheFactory implements CacheFactory {
 
-    private static CacheManager cacheManager = CacheManager.newInstance(Configuration.root().getCacheConfigLocation());
+    private static CacheManager cacheManager = CacheManager.newInstance(
+            ConfigurationFactory.parseConfiguration(
+                    EhCacheFactory.class.getResource(Configuration.root().getCacheConfigLocation())));
 
     @Override
     public Cache getCache(String groupName) {

@@ -1,7 +1,5 @@
 package com.mudalov.safe.impl;
 
-import com.mudalov.safe.Command;
-import com.mudalov.safe.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * API Entry point, links commands and execution contexts
+ *
  * User: mudalov
  * Date: 22/01/15
  * Time: 23:57
@@ -22,16 +22,19 @@ public class SafeCommands {
 
     private static final Map<String, GroupExecutionContext> groupContexts = new ConcurrentHashMap<String, GroupExecutionContext>();
 
-    private String group = "DefaultGroup";
+    private static final String DefaultGroup = "DefaultGroup";
 
     private SafeCommands() {
     }
 
-    public static <T> Command<T> create(Class<BaseCommand<T>> commandClass, String group) {
+    public static <T> CommandRef<T> create(BaseCommand<T> command, String group) {
         GroupExecutionContext groupContext = getGroupContext(group);
-        BaseCommand<T> command = ReflectionUtils.createInstanceSilently(commandClass);
         command.setContext(groupContext);
-        return command;
+        return new CommandRef<T>(groupContext, command);
+    }
+
+    public static <T> CommandRef<T> create(BaseCommand<T> command) {
+        return create(command, DefaultGroup);
     }
 
     private static GroupExecutionContext getGroupContext(String groupName) {
