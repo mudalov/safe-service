@@ -4,8 +4,7 @@ package com.mudalov.safe.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GroupExecutionContextTest {
@@ -83,6 +82,37 @@ public class GroupExecutionContextTest {
         Assert.assertEquals(result, errorSum.fallback());
         Assert.assertEquals(1, errorFlag.get());
     }
+
+    @Test
+    public void testExecute_FallBackOnRejected() throws InterruptedException {
+        final AtomicInteger errorFlag = new AtomicInteger(0);
+        final BaseCommand<Integer> sum = new BaseCommand<Integer>() {
+            @Override
+            public Integer action() throws Exception {
+                Thread.sleep(500);
+                return 1;
+            }
+
+            @Override
+            public void onError(Exception cause) {
+                Assert.assertTrue(cause instanceof RejectedExecutionException);
+                errorFlag.incrementAndGet();
+            }
+        };
+        // emulation of several clients calling the same service
+        ExecutorService clientExecutor = Executors.newFixedThreadPool(4);
+        for (int i = 0; i < 4; i++) {
+            clientExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    SafeCommands.create(sum, "toManyConnections").execute();
+                }
+            });
+        }
+        clientExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        Assert.assertTrue(errorFlag.get() > 0);
+    }
+
 
 
 }
