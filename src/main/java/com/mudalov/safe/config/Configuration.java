@@ -12,7 +12,7 @@ import com.typesafe.config.ConfigFactory;
  */
 public class Configuration {
 
-    public static final String DefaultConfigFile = "safe-service";
+    public static final String DEFAULT_CONFIG_FILE = "safe-service";
 
     private static Configuration rootConfig = load();
 
@@ -84,7 +84,7 @@ public class Configuration {
     }
 
     public static Configuration load() {
-        return load(DefaultConfigFile);
+        return load(DEFAULT_CONFIG_FILE);
     }
 
     private static Configuration load(String baseName) {
