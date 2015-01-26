@@ -105,7 +105,7 @@ public class BaseCommandExecutionTest {
             clientExecutor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    SafeCommands.create(sum, "toManyConnections").execute();
+                    SafeCommands.create(sum, "tooManyConnections").execute();
                 }
             });
         }
