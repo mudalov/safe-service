@@ -16,11 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class SafeCommands {
 
-    private static final Logger log = LoggerFactory.getLogger(SafeCommands.class);
-
-    private static final ReentrantLock groupContextLock = new ReentrantLock();
-
-    private static final Map<String, GroupExecutionContext> groupContexts = new ConcurrentHashMap<String, GroupExecutionContext>();
+    private static final ConcurrentHashMap<String, GroupExecutionContext> groupContexts = new ConcurrentHashMap<String, GroupExecutionContext>();
 
     private static final String DefaultGroup = "DefaultGroup";
 
@@ -42,17 +38,12 @@ public class SafeCommands {
         if (context != null) {
             return context;
         }
-        groupContextLock.lock();
-        try {
-            context = groupContexts.get(groupName);
-            if (context != null) {
-                return context;
-            }
-            context = new GroupExecutionContext(groupName);
-            groupContexts.put(groupName, context);
+        context = new GroupExecutionContext(groupName);
+        GroupExecutionContext prevContext = groupContexts.putIfAbsent(groupName, context);
+        if (prevContext == null) {
             return context;
-        } finally {
-            groupContextLock.unlock();
+        } else {
+            return prevContext;
         }
     }
 
